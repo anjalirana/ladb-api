@@ -1,0 +1,7 @@
+race_list:
+    path:     /api
+    defaults: { _controller: RaceBundle:Race:list }
+
+race_data:
+    path:     /raceData
+    defaults: { _controller: RaceBundle:Race:raceDetail }
