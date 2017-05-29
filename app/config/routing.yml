@@ -1,11 +1,14 @@
 race_list:
     path:     /api
     defaults: { _controller: RaceBundle:Race:list }
+    methods: GET
 
 race_types:
     path:     /api/types
     defaults: { _controller: RaceBundle:Race:types }
+    methods: GET
 
 race_data:
     path:     /api/raceDetail
     defaults: { _controller: RaceBundle:Race:raceDetail }
+    methods: GET

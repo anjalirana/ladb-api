@@ -15,16 +15,18 @@ class RaceController extends FOSRestController
     /**
      * @Route("/", name="homepage")
      */
-    public function typesAction(Request $request)
+    public function typesAction()
     {
         $dataProvider = new RaceDataProvider();
-        $view = new View();
-        $headers = [
-            'Content-Type' => 'application/json'
-        ];
-        $view->setHeaders($headers);
-        $view->setData($dataProvider->getTypes());
-        $view->setStatusCode(200);
+
+        $view = $this->getView();
+        $types = $dataProvider->getTypes();
+        if (!empty($types)) {
+            $view->setData($types);
+            $view->setStatusCode(200);
+        } else {
+            $view->setStatusCode(404);
+        }
 
         return $this->getViewHandler()->handle($view);
 
@@ -34,13 +36,16 @@ class RaceController extends FOSRestController
     {
         $type = $request->get('type');
         $dataProvider = new RaceDataProvider();
-        $view = new View();
-        $headers = [
-            'Content-Type' => 'application/json'
-        ];
-        $view->setHeaders($headers);
-        $view->setData($dataProvider->getNextFiveRaces($type));
-        $view->setStatusCode(200);
+
+        $view = $this->getView();
+        $nextFiveRaces = $dataProvider->getNextFiveRaces($type);
+
+        if (!empty($nextFiveRaces)) {
+            $view->setData($nextFiveRaces);
+            $view->setStatusCode(200);
+        } else {
+            $view->setStatusCode(404);
+        }
 
         return $this->getViewHandler()->handle($view);
     }
@@ -49,20 +54,32 @@ class RaceController extends FOSRestController
     {
         $code = $request->get('code');
         $dataProvider = new RaceDataProvider();
+
+        $raceData = $dataProvider->getRaceData($code);
+        $view = $this->getView();
+
+        if (!empty($raceData)) {
+            $racePlayers = $dataProvider->getRacePlayers($code);
+            $view->setData([
+                'raceData' => $raceData,
+                'players' => $racePlayers
+            ]);
+            $view->setStatusCode(200);
+        } else {
+            $view->setStatusCode(404);
+        }
+
+        return $this->getViewHandler()->handle($view);
+    }
+
+    protected function getView()
+    {
         $view = new View();
         $headers = [
             'Content-Type' => 'application/json'
         ];
         $view->setHeaders($headers);
-        $view->setData([
-            'raceData' => $dataProvider->getRaceData($code),
-            'players' => $dataProvider->getRacePlayers($code)
-        ]);
-        $view->setStatusCode(200);
 
-        return $this->getViewHandler()->handle($view);
+        return $view;
     }
-
-
-
 }
